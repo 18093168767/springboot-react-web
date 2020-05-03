@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dream21th.web.dao.SysRoleMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.dream21th.web.bean.SysRole">
+		<id column="role_id" property="roleId" />
+		<result column="role_name" property="roleName" />
+		<result column="role_code" property="roleCode" />
+		<result column="role_desc" property="roleDesc" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="del_flag" property="delFlag" />
+	</resultMap>
+
+    <sql id="query">
+        <if test="role.roleName!=null and role.roleName!=''">
+          and s.role_name=#{role.roleName} 
+        </if>
+        <if test="role.roleCode!=null and role.roleCode!=''">
+          and s.role_code=#{role.roleCode}
+        </if>
+    </sql>
+    
+    <select id="getRolesWithPage" resultMap="BaseResultMap">
+        select * from sys_role s where 1=1
+        <include refid="query"></include>
+        limit #{begin},#{end}
+    </select>
+    
+    <select id="getRolesCount" resultType="int">
+        select count(1) from sys_role s where 1=1
+        <include refid="query"></include>
+    </select>
+	
+	<select id="getRolesByUserId" resultMap="BaseResultMap">
+	   select r.*
+       from sys_role r inner join sys_user_role ur on r.role_id=ur.role_id 
+       INNER JOIN sys_user u on ur.user_id=u.user_id where u.user_id=#{userId}
+	</select>
+</mapper>
